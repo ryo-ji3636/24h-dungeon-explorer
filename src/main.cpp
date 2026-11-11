@@ -58,14 +58,18 @@ vector<string> dungeonMap = {
 //=================================
 
 bool CanMove(int x, int y) {
-    
+    if (x < 0 || x >= dungeonMap[0].size() || y < 0 || y >= dungeonMap.size()) {
+        return false;
+    }
+    else {
+        if (dungeonMap[y][x] == '#') {
+            return false;
+        }
+        return true;
+    }
 }
 
-void HandleInput() {
-    Player player;
-    player.x = 1;
-    player.y = 1;
-    player.haskey = false;
+void HandleInput(Player& player) {
 
     if (IsKeyPressed(KEY_UP)) {
         if (CanMove(player.x, player.y - 1)) {
@@ -77,7 +81,7 @@ void HandleInput() {
             player.y++;
         }
     }
-    elseif (IsKeyPressed(KEY_LEFT)) {
+    else if (IsKeyPressed(KEY_LEFT)) {
         if(CanMove(player.x - 1, player.y)) {
             player.x--;
         }
@@ -89,19 +93,15 @@ void HandleInput() {
     }
 }
 
-void UpdateGame() {
-    Player player;
-    player.x = 1;
-    player.y = 1;
-    player.haskey = false;
+void UpdateGame(Player& player, GameState& gameState) {
 
-    HandleInput();
+    HandleInput(player);
 
-    if (dungeonMap[player.x][player.y] == 'K') {
+    if (dungeonMap[player.y][player.x] == 'K') {
         player.haskey = true;
-        dungeonMap[player.x][player.y] = '.';
+        dungeonMap[player.y][player.x] = '.';
     }
-    if (dungeonMap[player.x][player.y] == 'E') {
+    if (dungeonMap[player.y][player.x] == 'E') {
         if (player.haskey == true) {
             gameState = GameState::Victory;
         }
@@ -109,7 +109,7 @@ void UpdateGame() {
 }
 
 
-void DrawGame() {
+void DrawGame(const Player& player) {
     
     for (int y = 0; y < dungeonMap.size(); y++) {
         for (int x = 0; x < dungeonMap[y].size(); x++) {
@@ -143,6 +143,13 @@ void DrawGame() {
             }
         }
     }
+
+    DrawRectangle(player.x * TILE_SIZE,
+                  player.y * TILE_SIZE,
+                  TILE_SIZE,
+                  TILE_SIZE,
+                  BLUE);
+    
 }
 
 
@@ -152,5 +159,35 @@ void DrawGame() {
 
 
 int main() {
+    Player player;
+    player.x = 1;
+    player.y = 1;
+    player.haskey = false;
+    GameState gameState = GameState::Playing;
 
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE.c_str());
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose()) {
+        if (gameState == GameState::Playing) {
+            UpdateGame(player, gameState);
+        }
+        
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        if (gameState == GameState::Playing) {
+            DrawGame(player);
+        }
+        if (gameState == GameState::Victory) {
+            DrawText("VICTORY", 100, 100, 20, BLACK);
+        }
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+
+
+    return 0;
 }
