@@ -59,6 +59,9 @@ int main() {
         if (gameState == GameState::GameOver) {
             DrawText("GAME OVER", 100, 100, 20, BLACK);
         }
+        if (IsKeyPressed(KEY_R)) {
+            ResetGame(player, enemy, gameState);
+        }
 
         EndDrawing();
     }

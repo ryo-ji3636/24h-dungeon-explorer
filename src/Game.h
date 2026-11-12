@@ -5,6 +5,7 @@ struct Player {
     int x;
     int y;
     int hp = 100;
+    int maxhp = 100;
     int attack = 20;
     bool haskey = false;
 };
@@ -25,6 +26,8 @@ enum class GameState {
 };
 
 // Function declarations
+bool IsWalkableTile(int x, int y);
+
 bool CanMove(int x, int y, const Enemy& enemy);
 
 bool HandleInput(Player& player, Enemy& enemy);
@@ -39,5 +42,8 @@ void AttackEnemy(const Player& player, Enemy& enemy);
 
 void EnemyAttack(Player& player, const Enemy& enemy);
 
+void MoveEnemy(const Player& player, Enemy& enemy);
+
+void ResetGame(Player& player, Enemy& enemy, GameState& gameState);
 
 #endif // GAME_H

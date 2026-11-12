@@ -24,6 +24,16 @@ vector<string> dungeonMap = {
 //=================================
 // Function Declarations
 //=================================
+bool IsWalkableTile(int x, int y) {
+    if (x < 0 || x >= dungeonMap[0].size() || y < 0 || y >= dungeonMap.size()) {
+        return false;
+    }
+    else if (dungeonMap[y][x] == '#') {
+        return false;
+    }
+
+    return true;
+}
 
 bool CanMove(int x, int y, const Enemy& enemy) {
     if (x < 0 || x >= dungeonMap[0].size() || y < 0 || y >= dungeonMap.size()) {
@@ -91,8 +101,13 @@ void UpdateGame(Player& player, Enemy& enemy, GameState& gameState) {
     if (gameState == GameState::Victory) {
         return;
     }
-    if(playerActed) {
-        EnemyAttack(player, enemy);
+    if(playerActed && enemy.hp > 0) {
+        if (IsInAttackRange(player, enemy)) {
+            EnemyAttack(player, enemy);
+        }
+        else {
+            MoveEnemy(player, enemy);
+        }
     }
 
     if (player.hp <= 0) {
@@ -154,6 +169,11 @@ void DrawGame(const Player& player, const Enemy& enemy) {
     DrawRectangle(0, 384, 576, 48, DARKGRAY);
     string hpText = "HP: " + to_string(player.hp);
     DrawText(hpText.c_str(), 10, 395, 20, WHITE);
+    DrawRectangle(100, 395, 200, 20, GRAY);
+    int hpWidth = 200 * player.hp / player.maxhp;
+    DrawRectangle(100, 395, hpWidth, 20, GREEN);
+    string haskeyText = player.haskey ? "KEY: YES" : "KEY: NO";
+    DrawText(haskeyText.c_str(), 360, 395, 20, YELLOW);
     
 }
 
@@ -175,4 +195,62 @@ void EnemyAttack(Player& player, const Enemy& enemy) {
     if(enemy.hp > 0 && IsInAttackRange(player, enemy)) {
         player.hp -= enemy.attack;
     }
+}
+
+bool CanEnemyMove(int newX, int newY, const Player& player) {
+    if(!IsWalkableTile(newX, newY)) {
+        return false;
+    }
+    if (newX == player.x && newY == player.y) {
+        return false;
+    }
+
+    return true;
+}
+
+void MoveEnemy(const Player& player, Enemy& enemy) {
+    if (enemy.hp <= 0) {
+        return;
+    }
+    else {
+        int dx = abs(player.x - enemy.x);
+        int dy = abs(player.y - enemy.y);
+
+        if (dx >= dy) {
+            if (player.x > enemy.x) {
+                if (CanEnemyMove(enemy.x + 1, enemy.y, player)) {
+                    enemy.x++;
+                }
+            }
+            else {
+                if (CanEnemyMove(enemy.x - 1, enemy.y, player)) {
+                    enemy.x--;
+                }
+            }
+        }
+        else {
+            if (player.y > enemy.y) {
+                if (CanEnemyMove(enemy.x, enemy.y + 1, player)) {
+                enemy.y++;
+                }
+            }
+            else {
+                if (CanEnemyMove(enemy.x, enemy.y - 1, player)) {
+                    enemy.y--;
+                }
+            }
+        }
+    }
+}
+
+void ResetGame(Player& player, Enemy& enemy, GameState& gameState) {
+    player.x = 1;
+    player.y = 1;
+    player.hp = player.maxhp;
+    player.haskey = false;
+    enemy.x = 8;
+    enemy.y = 3;
+    enemy.hp = 50;
+    gameState = GameState::Playing;
+    dungeonMap[4][8] = 'K';
 }
