@@ -116,7 +116,31 @@ void UpdateGame(Player& player, Enemy& enemy, GameState& gameState) {
     
 }
 
+void DrawPlayer(const Player& player) {
+    const int TILE_SIZE = 48;
+    int px = player.x * TILE_SIZE;
+    int py = player.y * TILE_SIZE;
+    //BODY
+    DrawRectangle(px + 6, py + 12, 36, 30, BLUE);
+    //HEAD
+    DrawRectangle(px + 12, py + 4, 24, 20, SKYBLUE);
+    //EYES
+    DrawCircle(px + 17, py + 14, 5, BLACK);
+    DrawCircle(px + 27, py + 14, 5, BLACK);
+}
 
+void DrawEnemy(const Enemy& enemy) {
+    const int TILE_SIZE = 48;
+    int ex = enemy.x * TILE_SIZE;
+    int ey = enemy.y * TILE_SIZE;
+    //BODY
+    DrawRectangle(ex + 6, ey + 12, 36, 30, RED);
+    //HEAD
+    DrawRectangle(ex + 12, ey + 4, 24, 20, ORANGE);
+    //EYES
+    DrawCircle(ex + 17, ey + 14, 5, BLACK);
+    DrawCircle(ex + 27, ey + 14, 5, BLACK);
+}
 
 void DrawGame(const Player& player, const Enemy& enemy) {
     const int TILE_SIZE = 48;
@@ -153,17 +177,10 @@ void DrawGame(const Player& player, const Enemy& enemy) {
         }
     }
 
-    DrawRectangle(player.x * TILE_SIZE,
-                  player.y * TILE_SIZE,
-                  TILE_SIZE,
-                  TILE_SIZE,
-                  BLUE);
-    if (enemy.hp > 0) {
-        DrawRectangle(enemy.x * TILE_SIZE,
-                      enemy.y * TILE_SIZE,
-                      TILE_SIZE,
-                      TILE_SIZE,
-                      RED);
+    DrawPlayer(player);
+    
+    if(enemy.hp > 0) {
+        DrawEnemy(enemy);
     }
 
     DrawRectangle(0, 384, 576, 48, DARKGRAY);

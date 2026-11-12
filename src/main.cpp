@@ -54,10 +54,12 @@ int main() {
             DrawGame(player, enemy);
         }
         if (gameState == GameState::Victory) {
-            DrawText("VICTORY", 100, 100, 20, BLACK);
+            DrawText("VICTORY", 150, 150, 40, DARKGREEN);
+            DrawText("Press R to restart", 180, 220, 20, DARKGRAY);
         }
         if (gameState == GameState::GameOver) {
-            DrawText("GAME OVER", 100, 100, 20, BLACK);
+            DrawText("GAME OVER", 150, 150, 40, RED);
+            DrawText("Press R to restart", 180, 220, 20, DARKGRAY);
         }
         if (IsKeyPressed(KEY_R)) {
             ResetGame(player, enemy, gameState);

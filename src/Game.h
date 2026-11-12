@@ -34,6 +34,10 @@ bool HandleInput(Player& player, Enemy& enemy);
 
 void UpdateGame(Player& player, Enemy& enemy, GameState& gameState);
 
+void DrawPlayer(const Player& player);
+
+void DrawEnemy(const Enemy& enemy);
+
 void DrawGame(const Player& player, const Enemy& enemy);
 
 bool IsInAttackRange(const Player& player, const Enemy& enemy);
